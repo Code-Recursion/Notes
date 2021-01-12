@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content":"vs code rest client is pretty good"
+}
+
+###
+
+DELETE http://localhost:3001/api/notes/6
