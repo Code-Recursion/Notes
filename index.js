@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 
+// show static content using express's built-in middleware
+app.use(express.static('build'))
+
 //cors
 const cors = require("cors");
 app.use(cors());
