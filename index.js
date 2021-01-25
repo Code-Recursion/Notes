@@ -1,3 +1,8 @@
+// local env will only work if the deployment is not on production
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 const express = require("express");
 const app = express();
 
