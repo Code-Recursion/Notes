@@ -10,7 +10,8 @@
     "build:ui": "rm -rf build && cd ../../Frontend/ && npm run build --prod && cp -r build ../Backend/part-3/",
     "deploy": "git push heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "author": "Ajay Singh",
   "license": "ISC",
@@ -21,6 +22,11 @@
     "mongoose": "^5.11.12"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "nodemon": "^2.0.7",
+    "prettier-eslint": "^12.0.0",
+    "stylelint-config-prettier": "^8.0.2",
+    "tslint-config-prettier": "^1.18.0"
   }
 }
