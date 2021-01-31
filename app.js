@@ -14,7 +14,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
-    useCreateIndex: true
+    useCreateIndex: true,
   })
   .then(() => {
     console.log('connected to MongoDB')
@@ -32,11 +32,13 @@ app.use(express.static('build'))
 // json-parser
 app.use(express.json())
 
+// request logger middleware must be called before routes
+app.use(middleware.requestLogger)
+
 app.use('/api/notes', notesRouter)
 
-// calling request logger middleware
+// calling middlewares
 app.use(middleware.unknownEndpoint)
-app.use(middleware.requestLogger)
 app.use(middleware.errorHandler)
 
 module.exports = app

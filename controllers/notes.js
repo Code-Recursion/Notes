@@ -18,7 +18,7 @@ notesRouter.get('/:id', (request, response, next) => {
         response.status(404).end()
       }
     })
-    // he error that is passed forwards is given to the next function as a parameter. If next was called without a parameter, then the execution would simply move onto the next route or middleware. If the next function is called with a parameter, then the execution will continue to the error handler middleware.
+    // the error that is passed forwards is given to the next function as a parameter. If next was called without a parameter, then the execution would simply move onto the next route or middleware. If the next function is called with a parameter, then the execution will continue to the error handler middleware.
     .catch((error) => next(error))
   // errorHandler defined at the bottom
 })
