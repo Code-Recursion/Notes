@@ -1,11 +1,11 @@
-POST http://localhost:3001/api/notes
+POST http://localhost:3002/api/notes
 Content-Type: application/json
 
 {
-    "content":"asfe",
+    "content":"note my notes",
     "important":true
 }
 
 ###
 
-DELETE http://localhost:3001/api/notes/6001ab99eb60d72fa895a3ea
+DELETE http://localhost:3002/api/notes/68505bbecfdee147cc9986c8
