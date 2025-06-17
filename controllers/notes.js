@@ -4,13 +4,11 @@ const User = require("../models/user");
 
 notesRouter.get("/:userId", async (request, response) => {
   try {
-    const user = await User.findById(request.params.userId).then(
-      (data) => data
-    );
-    console.log("use", user);
+    const user = await User.findById(request.params.userId).populate("notes");
+    console.log("user", user);
     response.json(user.notes);
   } catch (error) {
-    response.json({ message: "user not found" });
+    response.status(500).json({ message: "Error fetching user notes" });
   }
   //return all notes from note collection
   // Note.find({}).then((notes) => {
@@ -42,28 +40,35 @@ notesRouter.delete("/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-notesRouter.post("/", (request, response, next) => {
-  const body = request.body;
+notesRouter.post("/", async (request, response, next) => {
+  const { content, important = false, user: userId } = request.body;
 
-  if (body.content === undefined) {
-    return response.status(400).json({
-      error: "content is missing",
-    });
+  if (!content || !userId) {
+    return response.status(400).json({ error: "Missing content or user ID" });
   }
 
-  const note = new Note({
-    content: body.content,
-    important: body.important || false,
-    date: new Date(),
-  });
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return response.status(404).json({ error: "User not found" });
+    }
 
-  note
-    .save()
-    .then((savedNote) => savedNote.toJSON())
-    .then((savedAndJsonForamttedNote) => {
-      response.json(savedAndJsonForamttedNote);
-    })
-    .catch((error) => next(error));
+    const note = new Note({
+      content,
+      important,
+      date: new Date(),
+      user: user._id,
+    });
+
+    const savedNote = await note.save();
+
+    user.notes.push(savedNote._id);
+    await user.save();
+
+    response.status(201).json(savedNote.toJSON());
+  } catch (error) {
+    next(error);
+  }
 });
 
 notesRouter.put("/:id", (request, response, next) => {
