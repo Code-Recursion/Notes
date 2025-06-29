@@ -5,7 +5,7 @@ const User = require("../models/user");
 notesRouter.get("/:userId", async (request, response) => {
   try {
     const user = await User.findById(request.params.userId).populate("notes");
-    console.log("user", user);
+    // console.log("user", user);
     response.json(user.notes);
   } catch (error) {
     response.status(500).json({ message: "Error fetching user notes" });
@@ -56,7 +56,6 @@ notesRouter.post("/", async (request, response, next) => {
     const note = new Note({
       content,
       important,
-      date: new Date(),
       user: user._id,
     });
 

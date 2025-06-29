@@ -1,22 +1,20 @@
 const mongoose = require("mongoose");
 
-const noteSchema = new mongoose.Schema({
-  content: {
-    type: String,
-    minlength: 5,
-    required: true,
+const noteSchema = new mongoose.Schema(
+  {
+    content: {
+      type: String,
+      minlength: 5,
+      required: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    important: Boolean,
   },
-  date: {
-    type: Date,
-    required: true,
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-
-  important: Boolean,
-});
+  { timestamps: true }
+);
 
 noteSchema.set("toJSON", {
   transform: (document, returnedObject) => {
