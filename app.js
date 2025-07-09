@@ -26,7 +26,23 @@ mongoose
   });
 
 //cors cross origin resource sharing
-app.use(cors());
+// app.use(cors());
+
+const allowedOrigins = ["https://next-notes-mu.vercel.app"];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow curl/postman
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+app.options("*", cors()); // handle preflight
 
 // show static content React) using express's built-in middleware
 app.use(express.static("build"));
@@ -36,6 +52,10 @@ app.use(express.json());
 
 // request logger middleware must be called before routes
 app.use(middleware.requestLogger);
+
+app.get("/status", (req, res) => {
+  return res.write(`<h1>server is up!</h1> request made on - ${new Date()}`);
+});
 
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
