@@ -6,7 +6,8 @@ notesRouter.get("/:userId", async (request, response) => {
   try {
     const user = await User.findById(request.params.userId).populate({
       path: "notes",
-      options: { sort: { createdAt: -1 } }, // ✅ Sort notes by createdAt descending
+      match: { isArchive: { $ne: true } },
+      options: { sort: { createdAt: -1 } },
     });
     // console.log("user", user);
     response.json(user.notes);
@@ -17,7 +18,7 @@ notesRouter.get("/:userId", async (request, response) => {
 
 //return all notes from note collection
 notesRouter.get("/", async (request, response) => {
-  Note.find({})
+  Note.find({ isArchive: { $ne: true } })
     .sort({ createdAt: -1 })
     .then((notes) => {
       response.json(notes.map((n) => n.toJSON()));
@@ -26,22 +27,21 @@ notesRouter.get("/", async (request, response) => {
 
 notesRouter.get("/:id", (request, response, next) => {
   //using mongoose's findById method for fetching individual notes
-
-  Note.findById(request.params.id)
-    .then((note) => {
-      if (note) {
-        response.json(note).end();
-      } else {
-        response.status(404).end();
-      }
-    })
-    // the error that is passed forwards is given to the next function as a parameter. If next was called without a parameter, then the execution would simply move onto the next route or middleware. If the next function is called with a parameter, then the execution will continue to the error handler middleware.
-    .catch((error) => next(error));
-  // errorHandler defined at the bottom
+  try {
+    const note = Note.findById(request.params.id);
+    if (!note || note.isArchive) {
+      return response.status(404).json({ error: "Note not found" });
+    }
+    return response.json(note).end();
+  } catch (error) {
+    next(error);
+  }
 });
 
 notesRouter.delete("/:id", (request, response, next) => {
-  Note.findByIdAndRemove(request.params.id)
+  Note.findByIdAndUpdate(request.params.id, {
+    isArchive: true,
+  })
     .then(() => {
       response.status(204).end();
     })

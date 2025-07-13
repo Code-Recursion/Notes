@@ -17,6 +17,10 @@ const noteSchema = new mongoose.Schema(
       ref: "User",
     },
     important: Boolean,
+    isArchive: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
