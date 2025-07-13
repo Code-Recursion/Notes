@@ -7,6 +7,11 @@ const noteSchema = new mongoose.Schema(
       minlength: 5,
       required: true,
     },
+    title: {
+      type: String,
+      minlength: 5,
+      required: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -28,7 +28,10 @@ mongoose
 //cors cross origin resource sharing
 // app.use(cors());
 
-const allowedOrigins = ["https://next-notes-mu.vercel.app"];
+const allowedOrigins = [
+  "http://localhost:3001",
+  "https://next-notes-mu.vercel.app",
+];
 app.use(
   cors({
     origin: function (origin, callback) {

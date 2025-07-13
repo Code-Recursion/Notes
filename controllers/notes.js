@@ -4,16 +4,24 @@ const User = require("../models/user");
 
 notesRouter.get("/:userId", async (request, response) => {
   try {
-    const user = await User.findById(request.params.userId).populate("notes");
+    const user = await User.findById(request.params.userId).populate({
+      path: "notes",
+      options: { sort: { createdAt: -1 } }, // ✅ Sort notes by createdAt descending
+    });
     // console.log("user", user);
     response.json(user.notes);
   } catch (error) {
     response.status(500).json({ message: "Error fetching user notes" });
   }
-  //return all notes from note collection
-  // Note.find({}).then((notes) => {
-  //   response.json(notes.map((n) => n.toJSON()));
-  // });
+});
+
+//return all notes from note collection
+notesRouter.get("/", async (request, response) => {
+  Note.find({})
+    .sort({ createdAt: -1 })
+    .then((notes) => {
+      response.json(notes.map((n) => n.toJSON()));
+    });
 });
 
 notesRouter.get("/:id", (request, response, next) => {
@@ -41,10 +49,12 @@ notesRouter.delete("/:id", (request, response, next) => {
 });
 
 notesRouter.post("/", async (request, response, next) => {
-  const { content, important = false, user: userId } = request.body;
+  const { content, title, important = false, user: userId } = request.body;
 
-  if (!content || !userId) {
-    return response.status(400).json({ error: "Missing content or user ID" });
+  if (!title || !content || !userId) {
+    return response
+      .status(400)
+      .json({ error: "Missing content or user ID or title" });
   }
 
   try {
@@ -57,6 +67,7 @@ notesRouter.post("/", async (request, response, next) => {
       content,
       important,
       user: user._id,
+      title: title,
     });
 
     const savedNote = await note.save();
