@@ -2,7 +2,7 @@ const notesRouter = require("express").Router();
 const Note = require("../models/note");
 const User = require("../models/user");
 
-notesRouter.get("/:userId", async (request, response) => {
+notesRouter.get("/user/:userId", async (request, response) => {
   try {
     const user = await User.findById(request.params.userId).populate({
       path: "notes",
@@ -25,15 +25,19 @@ notesRouter.get("/", async (request, response) => {
     });
 });
 
-notesRouter.get("/:id", (request, response, next) => {
+notesRouter.get("/:id", async (request, response, next) => {
+  // console.log("request", request);
   //using mongoose's findById method for fetching individual notes
   try {
-    const note = Note.findById(request.params.id);
+    const note = await Note.findById(request.params.id);
+    // console.log("note", note);
     if (!note || note.isArchive) {
       return response.status(404).json({ error: "Note not found" });
     }
+    console.log("fta");
     return response.json(note).end();
   } catch (error) {
+    console.log("fAT GAYA");
     next(error);
   }
 });
@@ -82,13 +86,15 @@ notesRouter.post("/", async (request, response, next) => {
 });
 
 notesRouter.put("/:id", (request, response, next) => {
+  console.log("yo", request.params);
   const body = request.body;
   const note = {
+    title: body.title,
     content: body.content,
     important: body.important,
   };
 
-  Note.findByIdAndUpdate(request.params.id, note, { new: true })
+  Note.findByIdAndUpdate(request.params.id, note, { new: false })
     .then((updatedNote) => {
       response.json(updatedNote);
     })
