@@ -57,7 +57,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 
 app.get("/status", (req, res) => {
-  return res.write(`<h1>server is up!</h1> request made on - ${new Date()}`);
+  res.send(`<h1>Server is up!</h1><p>Request made on - ${new Date()}</p>`);
 });
 
 app.use("/api/login", loginRouter);
