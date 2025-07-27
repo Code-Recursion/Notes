@@ -51,6 +51,9 @@ app.use(middleware.requestLogger);
 app.get("/status", (req, res) => {
   res.send(`<h1>Server is up!</h1><p>Request made on - ${new Date()}</p>`);
 });
+app.get("api/test", (req, res) => {
+  res.send(`<h1>test server is up!</h1><p>Request made on - ${new Date()}</p>`);
+});
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/notes", notesRouter);
