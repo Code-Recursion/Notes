@@ -5,7 +5,18 @@ const User = require("../models/user");
 usersRouter.post("/", async (request, response) => {
   const { username, name, password } = request.body;
 
-  if (!password || password.length < 3) {
+  const missingFields = [];
+  if (!username) missingFields.push("username");
+  if (!name) missingFields.push("name");
+  if (!password) missingFields.push("password");
+
+  if (missingFields.length > 0) {
+    return response.status(400).json({
+      error: "Missing required fields",
+      missing: missingFields,
+    });
+  }
+  if (password.length < 3) {
     return response.status(400).json({
       error: "password must be at least 3 characters long",
     });
@@ -26,6 +37,14 @@ usersRouter.post("/", async (request, response) => {
   } catch (error) {
     if (error.name === "ValidationError") {
       return response.status(400).json({ error: error.message });
+    }
+    if (error.code === 11000) {
+      return response
+        .status(409)
+        .json({
+          error: "User with the given username already exists",
+          message: error.message,
+        });
     }
     response.status(500).json({ error: "something went wrong" });
   }

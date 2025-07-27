@@ -2,12 +2,17 @@ const notesRouter = require("express").Router();
 const Note = require("../models/note");
 const User = require("../models/user");
 
+// get all user notes
 notesRouter.get("/user/:userId", async (request, response) => {
   try {
-    const user = await User.findById(request.params.userId).populate({
+    const queyrObj = request.query;
+    console.log("queyrObj", queyrObj);
+    const { userId } = request.params;
+    const { sortBy } = request.query; // default to createdAt
+    const user = await User.findById(userId).populate({
       path: "notes",
       match: { isArchive: { $ne: true } },
-      options: { sort: { createdAt: -1 } },
+      options: { sort: { [sortBy]: -1 } },
     });
     // console.log("user", user);
     response.json(user.notes);
@@ -19,7 +24,7 @@ notesRouter.get("/user/:userId", async (request, response) => {
 //return all notes from note collection
 notesRouter.get("/", async (request, response) => {
   Note.find({ isArchive: { $ne: true } })
-    .sort({ createdAt: -1 })
+    .sort({ updatedAt: -1 })
     .then((notes) => {
       response.json(notes.map((n) => n.toJSON()));
     });
