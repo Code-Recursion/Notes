@@ -1,10 +1,10 @@
-const app = require('./app')
-const http = require('http')
-const config = require('./utils/config')
-const logger= require('./utils/logger')
+const app = require("./api");
+const http = require("http");
+const config = require("./utils/config");
+const logger = require("./utils/logger");
 
-const server = http.createServer(app)
+const server = http.createServer(app);
 
 server.listen(config.PORT, () => {
-  logger.info(`Server runnning on port http://localhost:${config.PORT}`)
-})
+  logger.info(`Server runnning on port http://localhost:${config.PORT}`);
+});
